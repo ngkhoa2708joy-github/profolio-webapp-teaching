@@ -167,7 +167,7 @@ export default function Timetable() {
         setError(error.message);
         setSchedules([]);
       } else {
-        setSchedules((data as Schedule[]) || []);
+        setSchedules((data as unknown as Schedule[]) || []);
       }
       setLoading(false);
     }
@@ -271,7 +271,7 @@ export default function Timetable() {
       alert("Failed to add schedule.");
     } else {
       if (data && data.type === activeTab) {
-        setSchedules((prev) => [...prev, data as Schedule]);
+        setSchedules((prev) => [...prev, data as unknown as Schedule]);
       }
       setShowAddForm(false);
       setSelectedStudent("");
