@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
-// Bảng phối màu Pastel dành riêng cho học sinh
+// Bảng phối màu Pastel đồng bộ toàn hệ thống
 const STUDENT_THEMES = [
   {
     hoverBorder: "hover:border-blue-300",
@@ -79,7 +79,6 @@ const STUDENT_THEMES = [
   },
 ];
 
-// Hàm băm id để chọn màu cố định cho từng học sinh
 function getStudentTheme(studentId: string) {
   let hash = 0;
   for (let i = 0; i < studentId.length; i++) {
@@ -102,7 +101,6 @@ interface StudentCardProps {
 }
 
 export default function StudentCard({ student }: StudentCardProps) {
-  // Lấy màu ngẫu nhiên nhưng cố định cho student này
   const theme = useMemo(() => getStudentTheme(student.id), [student.id]);
 
   return (
@@ -110,37 +108,36 @@ export default function StudentCard({ student }: StudentCardProps) {
       href={`/students/${student.id}`}
       className="group block w-full outline-none"
     >
+      {/* Responsive p-4 cho Mobile, p-6 cho Tablet/Desktop */}
       <div
-        className={`relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${theme.hoverBorder} ${theme.hoverShadow}`}
+        className={`relative rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${theme.hoverBorder} ${theme.hoverShadow}`}
       >
-        {/* Decorative background (Bọc trong overflow-hidden) */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-2xl">
+        {/* Decorative background */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-3xl">
           <div
-            className={`absolute -right-12 -top-12 h-32 w-32 rounded-full transition-transform duration-500 group-hover:scale-[1.8] ${theme.decoBg}`}
+            className={`absolute -right-8 -top-8 sm:-right-12 sm:-top-12 h-24 w-24 sm:h-32 sm:w-32 rounded-full transition-transform duration-500 group-hover:scale-[1.8] ${theme.decoBg}`}
           />
         </div>
 
         <div className="relative z-10">
           {/* Avatar + Action Arrow */}
           <div className="flex items-start justify-between">
-            <div className="relative">
-              {/* Sửa lại kích thước ảnh chuẩn h-16 w-16 */}
+            <div className="relative shrink-0">
+              {/* Responsive size ảnh */}
               <img
                 src={student.avatar}
                 alt={`${student.name}'s avatar`}
-                className={`h-16 w-16 rounded-2xl object-cover shadow-inner ring-1 transition-all duration-300 group-hover:-rotate-3 group-hover:scale-105 group-hover:shadow-md ${theme.avatarRing}`}
+                className={`h-14 w-14 sm:h-16 sm:w-16 rounded-2xl object-cover shadow-inner ring-2 transition-all duration-300 group-hover:-rotate-3 group-hover:scale-105 group-hover:shadow-md ${theme.avatarRing}`}
               />
-
-              {/* Online indicator */}
-              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-400 shadow-sm" />
+              <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 border-white bg-emerald-400 shadow-sm" />
             </div>
 
-            {/* Icon Mũi tên góc phải */}
+            {/* Icon Mũi tên */}
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:text-white group-hover:shadow-md ${theme.arrowHoverBg}`}
+              className={`flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:text-white group-hover:shadow-md ${theme.arrowHoverBg}`}
             >
               <svg
-                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5"
+                className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-0.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -156,34 +153,34 @@ export default function StudentCard({ student }: StudentCardProps) {
           </div>
 
           {/* Student information */}
-          <div className="mt-5">
+          <div className="mt-4 sm:mt-5">
             <h2
-              className={`text-xl font-extrabold tracking-tight text-slate-900 transition-colors ${theme.titleHover}`}
+              className={`text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 transition-colors ${theme.titleHover}`}
             >
               {student.name}
             </h2>
 
-            <div className="mt-2.5 flex items-center gap-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2 sm:gap-2.5">
               <span
-                className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-widest ring-1 ${theme.badgeBg} ${theme.badgeText} ${theme.badgeRing}`}
+                className={`inline-flex items-center rounded-md px-2 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ring-1 ${theme.badgeBg} ${theme.badgeText} ${theme.badgeRing}`}
               >
                 {student.grade}
               </span>
-              <span className="truncate text-xs font-medium text-slate-500">
+              <span className="truncate text-[11px] sm:text-xs font-medium text-slate-500">
                 {student.email}
               </span>
             </div>
           </div>
 
           {/* CTA Footer */}
-          <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+          <div className="mt-5 sm:mt-6 flex items-center justify-between border-t border-slate-100 pt-3 sm:pt-4">
             <span
-              className={`text-sm font-bold text-slate-500 transition-colors ${theme.footerHover}`}
+              className={`text-xs sm:text-sm font-bold text-slate-500 transition-colors ${theme.footerHover}`}
             >
               View profile
             </span>
             <svg
-              className={`h-4 w-4 text-slate-300 transition-colors ${theme.footerHover}`}
+              className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-300 transition-colors ${theme.footerHover}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -191,7 +188,7 @@ export default function StudentCard({ student }: StudentCardProps) {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 d="M9 5l7 7-7 7"
               />
             </svg>
