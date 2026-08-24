@@ -14,18 +14,19 @@ export default function TimetableSection() {
           : "bg-blue-600 shadow-md hover:bg-blue-700"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6 sm:px-8">
+      {/* Giảm padding ngang/dọc của thanh toolbar để tiết kiệm diện tích */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Sleek Blue Toolbar Toggle */}
         <button
           type="button"
           onClick={() => setShowTimetable((prev) => !prev)}
-          className="group flex w-full items-center justify-between py-4 transition-opacity"
+          className="group flex w-full items-center justify-between py-3 transition-opacity"
         >
-          <div className="flex items-center gap-4">
-            {/* Calendar Icon */}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors group-hover:bg-white/30">
+          <div className="flex items-center gap-3">
+            {/* Calendar Icon - Thu nhỏ size icon */}
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors group-hover:bg-white/30">
               <svg
-                className="h-5 w-5"
+                className="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -41,7 +42,7 @@ export default function TimetableSection() {
 
             <div className="text-left">
               <div className="flex items-center gap-2">
-                <h2 className="text-sm sm:text-base font-bold text-white transition-colors">
+                <h2 className="text-sm font-bold text-white transition-colors">
                   Weekly Teaching Timetable
                 </h2>
                 {/* Ping Animation Indicator */}
@@ -52,23 +53,23 @@ export default function TimetableSection() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-blue-200">
+              <p className="text-[11px] text-blue-200 mt-0.5">
                 {showTimetable
                   ? "Click to collapse schedule overview"
-                  : "Manage student assignments and view time slot availability"}
+                  : "Manage student assignments and view time slots"}
               </p>
             </div>
           </div>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {!showTimetable && (
-              <span className="hidden sm:block text-xs font-semibold text-blue-200 transition-colors group-hover:text-white">
+              <span className="hidden sm:block text-[11px] font-semibold text-blue-200 transition-colors group-hover:text-white">
                 Open Schedule
               </span>
             )}
             <div
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 ${
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 ${
                 showTimetable ? "rotate-180" : ""
               }`}
             >
@@ -91,12 +92,13 @@ export default function TimetableSection() {
 
         {/* Timetable Content Wrapped in White Container */}
         {showTimetable && (
-          <div className="pb-6 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
             {/* 
-              Bọc Timetable bên trong nền trắng (bg-white) để bảng bên trong 
-              không bị ảnh hưởng bởi nền xanh của Section và dễ đọc nhất. 
+              ĐÃ FIX: Xóa 'max-h-[75vh]' và 'overflow-y-auto' ở div này.
+              Giờ đây trang chỉ có 1 thanh cuộn duy nhất, không bị lỗi double scroll.
+              Đồng thời giảm padding (p-1.5) để tối đa hóa không gian cho bảng.
             */}
-            <div className="max-h-[75vh] overflow-y-auto rounded-2xl border border-blue-500/50 bg-white p-2 shadow-inner ring-4 ring-black/5">
+            <div className="rounded-xl border border-blue-500/50 bg-white p-1.5 shadow-inner ring-4 ring-black/5">
               <Timetable />
             </div>
           </div>

@@ -327,7 +327,10 @@ export default function Timetable() {
                   }`}
                 >
                   <span>{tab === "quebec" ? "🇨🇦" : "🇻🇳"}</span>
-                  <span className="capitalize">{tab}</span>
+                  {/* Thay đổi nhỏ tại đây: Hiển thị Canada thay vì Quebec */}
+                  <span className="capitalize">
+                    {tab === "quebec" ? "Canada" : tab}
+                  </span>
                 </button>
               ))}
             </div>
