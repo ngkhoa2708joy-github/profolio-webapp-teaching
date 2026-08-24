@@ -43,12 +43,48 @@ const timeGroups = [
 ];
 
 const STUDENT_COLOR_PALETTES = [
-  { bg: "bg-blue-50 hover:bg-blue-100", border: "border-blue-200", textName: "text-blue-900", textTime: "text-blue-700", dot: "bg-blue-500" },
-  { bg: "bg-emerald-50 hover:bg-emerald-100", border: "border-emerald-200", textName: "text-emerald-900", textTime: "text-emerald-700", dot: "bg-emerald-500" },
-  { bg: "bg-purple-50 hover:bg-purple-100", border: "border-purple-200", textName: "text-purple-900", textTime: "text-purple-700", dot: "bg-purple-500" },
-  { bg: "bg-amber-50 hover:bg-amber-100", border: "border-amber-200", textName: "text-amber-900", textTime: "text-amber-700", dot: "bg-amber-500" },
-  { bg: "bg-rose-50 hover:bg-rose-100", border: "border-rose-200", textName: "text-rose-900", textTime: "text-rose-700", dot: "bg-rose-500" },
-  { bg: "bg-cyan-50 hover:bg-cyan-100", border: "border-cyan-200", textName: "text-cyan-900", textTime: "text-cyan-700", dot: "bg-cyan-500" },
+  {
+    bg: "bg-blue-50 hover:bg-blue-100",
+    border: "border-blue-200",
+    textName: "text-blue-900",
+    textTime: "text-blue-700",
+    dot: "bg-blue-500",
+  },
+  {
+    bg: "bg-emerald-50 hover:bg-emerald-100",
+    border: "border-emerald-200",
+    textName: "text-emerald-900",
+    textTime: "text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  {
+    bg: "bg-purple-50 hover:bg-purple-100",
+    border: "border-purple-200",
+    textName: "text-purple-900",
+    textTime: "text-purple-700",
+    dot: "bg-purple-500",
+  },
+  {
+    bg: "bg-amber-50 hover:bg-amber-100",
+    border: "border-amber-200",
+    textName: "text-amber-900",
+    textTime: "text-amber-700",
+    dot: "bg-amber-500",
+  },
+  {
+    bg: "bg-rose-50 hover:bg-rose-100",
+    border: "border-rose-200",
+    textName: "text-rose-900",
+    textTime: "text-rose-700",
+    dot: "bg-rose-500",
+  },
+  {
+    bg: "bg-cyan-50 hover:bg-cyan-100",
+    border: "border-cyan-200",
+    textName: "text-cyan-900",
+    textTime: "text-cyan-700",
+    dot: "bg-cyan-500",
+  },
 ];
 
 function getStudentColor(studentId?: string) {
@@ -71,7 +107,7 @@ type Schedule = {
   students: { name: string } | null;
 };
 
-type Student = { id: string; name: string; };
+type Student = { id: string; name: string };
 
 export default function Timetable() {
   const [activeTab, setActiveTab] = useState<"quebec" | "vietnam">("quebec");
@@ -93,7 +129,9 @@ export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState("1");
   const [selectedStartTime, setSelectedStartTime] = useState("06:00");
   const [selectedEndTime, setSelectedEndTime] = useState("08:00");
-  const [selectedType, setSelectedType] = useState<"quebec" | "vietnam">("quebec");
+  const [selectedType, setSelectedType] = useState<"quebec" | "vietnam">(
+    "quebec",
+  );
   const [saving, setSaving] = useState(false);
 
   const [showMessageForm, setShowMessageForm] = useState(false);
@@ -111,7 +149,9 @@ export default function Timetable() {
       setError(null);
       const { data, error } = await supabase
         .from("schedules")
-        .select(`id, student_id, type, day_of_week, start_time, end_time, students (name)`)
+        .select(
+          `id, student_id, type, day_of_week, start_time, end_time, students (name)`,
+        )
         .eq("type", activeTab)
         .order("start_time", { ascending: true });
 
@@ -120,7 +160,6 @@ export default function Timetable() {
         setError(error.message);
         setSchedules([]);
       } else {
-        // Đã sửa lỗi Type theo chuẩn: Force casting thông qua unknown
         setSchedules((data as unknown as Schedule[]) || []);
       }
       setLoading(false);
@@ -130,7 +169,10 @@ export default function Timetable() {
 
   useEffect(() => {
     async function fetchStudents() {
-      const { data, error } = await supabase.from("students").select("id, name").order("name");
+      const { data, error } = await supabase
+        .from("students")
+        .select("id, name")
+        .order("name");
       if (!error) setStudents(data || []);
     }
     fetchStudents();
@@ -208,7 +250,9 @@ export default function Timetable() {
           end_time: selectedEndTime,
         },
       ])
-      .select(`id, student_id, type, day_of_week, start_time, end_time, students(name)`)
+      .select(
+        `id, student_id, type, day_of_week, start_time, end_time, students(name)`,
+      )
       .single();
 
     if (error) {
@@ -216,7 +260,6 @@ export default function Timetable() {
       alert("Failed to add schedule.");
     } else {
       if (data && data.type === activeTab) {
-        // Force casting ở đây để đồng bộ
         setSchedules((prev) => [...prev, data as unknown as Schedule]);
       }
       setShowAddForm(false);
@@ -277,7 +320,7 @@ export default function Timetable() {
                 </button>
               ))}
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
@@ -290,30 +333,66 @@ export default function Timetable() {
                     : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
                 }`}
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                  />
                 </svg>
                 {showMessageForm ? "Close" : "Quick Message"}
               </button>
 
               <button
-                onClick={() => triggerSecureAction(() => {
-                  setShowAddForm((prev) => !prev);
-                  setShowMessageForm(false);
-                })}
+                onClick={() =>
+                  triggerSecureAction(() => {
+                    setShowAddForm((prev) => !prev);
+                    setShowMessageForm(false);
+                  })
+                }
                 className="flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95"
               >
                 {isUnlocked ? (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                 ) : (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 )}
-                <span className="hidden md:inline">{showAddForm ? "Close" : "Add Schedule"}</span>
-                <span className="md:hidden">{showAddForm ? "Close" : "Add"}</span>
+                <span className="hidden md:inline">
+                  {showAddForm ? "Close" : "Add Schedule"}
+                </span>
+                <span className="md:hidden">
+                  {showAddForm ? "Close" : "Add"}
+                </span>
               </button>
             </div>
           </div>
@@ -340,18 +419,33 @@ export default function Timetable() {
           </div>
         )}
 
-        {/* 💬 Quick Message Form */}
+        {/* Quick Message Form */}
         {showMessageForm && (
           <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* Giữ nguyên như cũ... */}
             <div className="mb-4 flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded bg-emerald-100 text-emerald-600">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
                 </svg>
               </span>
               <div>
-                <h3 className="text-base font-bold text-slate-900">Send Quick Note to Workspace</h3>
-                <p className="text-xs text-slate-500">Automatically redirect and send to your WhatsApp.</p>
+                <h3 className="text-base font-bold text-slate-900">
+                  Send Quick Note to Workspace
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Automatically redirect and send to your WhatsApp.
+                </p>
               </div>
             </div>
             <textarea
@@ -373,59 +467,111 @@ export default function Timetable() {
                 disabled={!messageText.trim()}
                 className="flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50"
               >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.1 2 11.15c0 1.8.58 3.48 1.58 4.87L2.3 21.8l5.93-1.72A10.8 10.8 0 0 0 12 20.3c5.52 0 10-4.1 10-9.15C22 6.1 17.52 2 12 2Z" />
-                  <path fill="#fff" d="M16.87 13.72c-.27-.14-1.6-.8-1.85-.89-.25-.09-.43-.14-.61.14-.18.27-.7.89-.86 1.07-.16.18-.32.2-.59.07-.27-.14-1.13-.42-2.15-1.33-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.98 2.63 1.11 2.81c.14.18 1.92 2.92 4.65 4.09.65.28 1.16.45 1.55.57.65.2 1.24.17 1.71.1.52-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32Z" />
-                </svg>
                 Send via WhatsApp
               </button>
             </div>
           </div>
         )}
 
-        {/* 📝 Add Schedule Form */}
+        {/* Add Schedule Form */}
         {showAddForm && (
           <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* Giữ nguyên form */}
             <div className="mb-4 flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded bg-blue-100 text-blue-600">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </span>
-              <h3 className="text-base font-bold text-slate-900">Add New Schedule</h3>
+              <h3 className="text-base font-bold text-slate-900">
+                Add New Schedule
+              </h3>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
               <div className="lg:col-span-2">
-                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">Student</label>
-                <select value={selectedStudent} onChange={(e) => setSelectedStudent(e.target.value)} className={`${inputClassName} ${!selectedStudent ? "text-slate-500" : "text-slate-900"}`}>
-                  <option value="" disabled>-- Select a student --</option>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Student
+                </label>
+                <select
+                  value={selectedStudent}
+                  onChange={(e) => setSelectedStudent(e.target.value)}
+                  className={`${inputClassName} ${!selectedStudent ? "text-slate-500" : "text-slate-900"}`}
+                >
+                  <option value="" disabled>
+                    -- Select a student --
+                  </option>
                   {students.map((student) => (
-                    <option key={student.id} value={student.id} className="text-slate-900">{student.name}</option>
+                    <option
+                      key={student.id}
+                      value={student.id}
+                      className="text-slate-900"
+                    >
+                      {student.name}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">Day</label>
-                <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className={inputClassName}>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Day
+                </label>
+                <select
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(e.target.value)}
+                  className={inputClassName}
+                >
                   {days.map((day) => (
-                    <option key={day.value} value={day.value}>{day.full}</option>
+                    <option key={day.value} value={day.value}>
+                      {day.full}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">Start Time</label>
-                <input type="time" value={selectedStartTime} onChange={(e) => setSelectedStartTime(e.target.value)} className={inputClassName} />
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  value={selectedStartTime}
+                  onChange={(e) => setSelectedStartTime(e.target.value)}
+                  className={inputClassName}
+                />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">End Time</label>
-                <input type="time" value={selectedEndTime} onChange={(e) => setSelectedEndTime(e.target.value)} className={inputClassName} />
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  value={selectedEndTime}
+                  onChange={(e) => setSelectedEndTime(e.target.value)}
+                  className={inputClassName}
+                />
               </div>
             </div>
             <div className="mt-5 flex justify-end gap-3 border-t border-slate-200/80 pt-4">
-              <button onClick={() => setShowAddForm(false)} className="rounded-lg px-5 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-200">
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="rounded-lg px-5 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+              >
                 Cancel
               </button>
-              <button onClick={handleAddSchedule} disabled={saving || !selectedStudent} className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50">
+              <button
+                onClick={handleAddSchedule}
+                disabled={saving || !selectedStudent}
+                className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+              >
                 {saving ? "Saving..." : "Save Schedule"}
               </button>
             </div>
@@ -438,35 +584,34 @@ export default function Timetable() {
             <strong>Error:</strong> {error}
           </div>
         )}
-        {loading && (
-          <div className="mt-5 animate-pulse space-y-3 rounded-xl bg-slate-100 p-5">
-            <div className="h-10 rounded-lg bg-slate-200" />
-            <div className="h-20 rounded-lg bg-slate-200" />
-            <div className="h-20 rounded-lg bg-slate-200" />
-          </div>
-        )}
 
-        {/* 📅 Timetable Grid (Responsive: Giữ nguyên Desktop, tinh chỉnh Mobile) */}
+        {/* 📅 TIMETABLE GRID (Cực kỳ tối ưu cho Mobile dựa trên image.png) */}
         {!loading && !error && (
           <div className="relative mt-5 w-full overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
             <div className="overflow-auto max-h-[70vh]">
-              {/* PC giữ bề ngang to (min-w-900px), Điện thoại cho phép tràn vừa khít */}
+              {/* PC giữ bề ngang to (min-w-[900px]), Điện thoại bung 100% để khít 7 ngày */}
               <div className="min-w-full md:min-w-[900px] lg:min-w-[1024px]">
-                
                 {/* Header Row (Days) */}
                 <div className="flex sticky top-0 z-30 bg-slate-50 border-b border-slate-200/80 shadow-sm">
-                  {/* Cột Time (Thu nhỏ trên điện thoại còn 50px) */}
-                  <div className="sticky left-0 z-40 w-[50px] md:w-[120px] shrink-0 border-r border-slate-200/80 bg-slate-50 flex items-center justify-center p-1 md:p-3 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500">
+                  {/* ÉP SIÊU NHỎ cột Time trên Mobile (w-[35px]) để nhường chỗ cho 7 ngày */}
+                  <div className="sticky left-0 z-40 w-[35px] md:w-[120px] shrink-0 border-r border-slate-200/80 bg-slate-50 flex items-center justify-center p-0.5 md:p-3 text-[7px] md:text-xs font-bold uppercase tracking-widest text-slate-500">
                     Time
                   </div>
                   <div className="flex-1 grid grid-cols-7">
                     {days.map((day) => {
                       const isToday = day.value === currentDay;
                       return (
-                        <div key={day.value} className={`border-l border-slate-200/60 p-1 md:p-3 text-center transition-colors ${isToday ? "bg-indigo-50/80" : ""}`}>
-                          {/* Desktop hiện đủ (Mon), Mobile hiện chữ to và cắt ngắn (Mon) */}
-                          <span className={`text-[11px] md:text-sm font-bold ${isToday ? "text-indigo-700" : "text-slate-800"}`}>
-                            <span className="md:hidden">{day.name.slice(0, 3)}</span>
+                        <div
+                          key={day.value}
+                          className={`border-l border-slate-200/60 p-1 md:p-3 text-center transition-colors ${isToday ? "bg-indigo-50/80" : ""}`}
+                        >
+                          {/* Mobile hiện 1 chữ (M, T, W), Desktop hiện đủ */}
+                          <span
+                            className={`text-[11px] md:text-sm font-bold ${isToday ? "text-indigo-700" : "text-slate-800"}`}
+                          >
+                            <span className="md:hidden">
+                              {day.name.slice(0, 1)}
+                            </span>
                             <span className="hidden md:inline">{day.name}</span>
                           </span>
                         </div>
@@ -478,9 +623,11 @@ export default function Timetable() {
                 {/* Body Rows */}
                 <div className="flex flex-col">
                   {timeGroups.map((group) => (
-                    <div key={group.label} className="flex border-b border-slate-200/80 last:border-b-0">
-                      
-                      {/* Cột 1: Cột Buổi (Ẩn trên Mobile để tiết kiệm bề ngang) */}
+                    <div
+                      key={group.label}
+                      className="flex border-b border-slate-200/80 last:border-b-0"
+                    >
+                      {/* Cột 1: Cột Buổi (Ẩn trên Mobile) */}
                       <div className="hidden md:flex sticky left-0 z-20 w-[40px] shrink-0 border-r border-slate-200/80 bg-slate-100/50 flex-col items-center justify-center py-4">
                         <span className="text-xl mb-3">{group.icon}</span>
                         <span className="text-xs font-bold uppercase tracking-widest text-slate-500 [writing-mode:vertical-lr] rotate-180">
@@ -488,18 +635,23 @@ export default function Timetable() {
                         </span>
                       </div>
 
-                      {/* Phân vùng Thời gian và Lịch học */}
                       <div className="flex-1 flex flex-col min-w-0">
                         {group.times.map((time) => (
-                          <div key={time.start} className="group/row flex border-b border-slate-200/60 last:border-b-0">
-                            
-                            {/* Cột 2: Cột Giờ (Thu nhỏ w-[50px] trên mobile) */}
-                            <div className="sticky left-0 md:left-[40px] z-20 w-[50px] md:w-[80px] shrink-0 border-r border-slate-200/60 bg-white/95 backdrop-blur-sm px-0.5 md:px-2 py-2 md:py-3 flex flex-col items-center justify-center group-hover/row:bg-slate-50/80 transition-colors">
-                              <span className="text-[10px] md:text-sm font-bold text-slate-800">{time.start}</span>
-                              <span className="text-[8px] md:text-xs font-medium text-slate-500">{time.end}</span>
+                          <div
+                            key={time.start}
+                            className="group/row flex border-b border-slate-200/60 last:border-b-0"
+                          >
+                            {/* Cột 2: Cột Giờ (Siêu hẹp trên Mobile) */}
+                            <div className="sticky left-0 md:left-[40px] z-20 w-[35px] md:w-[80px] shrink-0 border-r border-slate-200/60 bg-white/95 backdrop-blur-sm px-0.5 md:px-2 py-2 md:py-3 flex flex-col items-center justify-center group-hover/row:bg-slate-50/80 transition-colors">
+                              <span className="text-[8px] md:text-sm font-bold text-slate-800">
+                                {time.start.slice(0, 5)}
+                              </span>
+                              <span className="text-[7px] md:text-xs font-medium text-slate-500">
+                                {time.end.slice(0, 5)}
+                              </span>
                             </div>
 
-                            {/* Các ô Ngày */}
+                            {/* Các ô Ngày (7 cột) */}
                             <div className="flex-1 grid grid-cols-7">
                               {days.map((day) => {
                                 const isToday = day.value === currentDay;
@@ -508,51 +660,116 @@ export default function Timetable() {
                                 const hasSchedules = daySchedules.length > 0;
 
                                 return (
-                                  <div key={key} className={`relative min-h-[60px] md:min-h-[72px] border-l border-slate-200/60 p-0.5 md:p-2 transition-colors ${isToday ? "bg-indigo-50/20" : "hover:bg-slate-50/60"}`}>
+                                  <div
+                                    key={key}
+                                    className={`relative min-h-[50px] md:min-h-[72px] border-l border-slate-200/60 p-[1px] md:p-2 transition-colors ${isToday ? "bg-indigo-50/20" : "hover:bg-slate-50/60"}`}
+                                  >
                                     {hasSchedules ? (
-                                      <div className="space-y-1.5 md:space-y-2">
+                                      <div className="space-y-[2px] md:space-y-2 h-full">
                                         {daySchedules.map((schedule) => {
-                                          const color = getStudentColor(schedule.student_id);
+                                          const color = getStudentColor(
+                                            schedule.student_id,
+                                          );
                                           return (
-                                            <div key={schedule.id} title={`${schedule.students?.name} (${schedule.start_time.slice(0, 5)} - ${schedule.end_time.slice(0, 5)})`} className={`cursor-default rounded md:rounded-lg border p-1 md:p-2 shadow-sm transition-all hover:shadow flex flex-col justify-center ${color.bg} ${color.border}`}>
-                                              
-                                              {/* Khối chứa Chấm + Tên + Giờ để vuốt dọc */}
-                                              <div className="flex items-start md:items-center gap-1 md:gap-2">
-                                                <span className={`mt-1 md:mt-0 h-1.5 w-1.5 md:h-2 md:w-2 rounded-full ${color.dot} shrink-0`} />
-                                                
-                                                <div className="flex flex-col min-w-0">
-                                                  {/* Desktop Name */}
-                                                  <p className={`hidden md:block line-clamp-1 text-xs font-bold leading-tight ${color.textName}`}>
-                                                    {schedule.students?.name ?? "Unknown"}
+                                            <div
+                                              key={schedule.id}
+                                              title={`${schedule.students?.name} (${schedule.start_time.slice(0, 5)} - ${schedule.end_time.slice(0, 5)})`}
+                                              className={`cursor-default rounded md:rounded-lg border p-[2px] md:p-2 shadow-sm transition-all hover:shadow flex flex-col justify-center h-full ${color.bg} ${color.border}`}
+                                            >
+                                              {/* 🖥️ VIEW LAPTOP: Hiển thị full (Dấu chấm, Tên đầy đủ, Giờ nằm ngang) */}
+                                              <div className="hidden md:flex flex-col">
+                                                <div className="flex items-center gap-2">
+                                                  <span
+                                                    className={`h-2 w-2 rounded-full ${color.dot} shrink-0`}
+                                                  />
+                                                  <p
+                                                    className={`line-clamp-1 text-xs font-bold leading-tight ${color.textName}`}
+                                                  >
+                                                    {schedule.students?.name ??
+                                                      "Unknown"}
                                                   </p>
-                                                  
-                                                  {/* Mobile Name (Chữ to, rõ ràng) */}
-                                                  <p className={`md:hidden line-clamp-1 text-[10px] font-bold leading-tight ${color.textName}`}>
-                                                    {schedule.students?.name?.split(' ')[0] ?? "U"}
-                                                  </p>
-                                                  
-                                                  {/* Hiển thị Thời gian xếp dọc bên dưới Tên (Áp dụng cho cả Mobile và Desktop) */}
-                                                  <div className={`mt-0.5 md:mt-1 text-[8px] md:text-xs font-semibold tracking-tighter md:tracking-normal ${color.textTime}`}>
-                                                    {schedule.start_time.slice(0, 5)}-{schedule.end_time.slice(0, 5)}
-                                                  </div>
+                                                </div>
+                                                <div
+                                                  className={`mt-1 text-xs font-semibold ${color.textTime}`}
+                                                >
+                                                  {schedule.start_time.slice(
+                                                    0,
+                                                    5,
+                                                  )}{" "}
+                                                  -{" "}
+                                                  {schedule.end_time.slice(
+                                                    0,
+                                                    5,
+                                                  )}
                                                 </div>
                                               </div>
 
+                                              {/* 📱 VIEW MOBILE (TỐI ƯU CỰC ĐẠI THEO ẢNH): Xếp dọc thời gian để không bị chèn chữ */}
+                                              <div className="flex md:hidden flex-col items-center justify-center w-full text-center space-y-[2px]">
+                                                {/* Tên Học sinh (Truncate nếu quá dài) */}
+                                                <p
+                                                  className={`line-clamp-1 text-[9px] font-extrabold leading-none tracking-tight w-full ${color.textName}`}
+                                                >
+                                                  {schedule.students?.name?.split(
+                                                    " ",
+                                                  )[0] ?? "U"}
+                                                </p>
+
+                                                {/* Thời gian xếp chồng (09:00 \n 11:00) thay vì nằm ngang -> Giải quyết triệt để lỗi ép chữ! */}
+                                                <div
+                                                  className={`flex flex-col text-[7.5px] font-semibold leading-[1.1] tracking-tighter opacity-90 ${color.textTime}`}
+                                                >
+                                                  <span>
+                                                    {schedule.start_time.slice(
+                                                      0,
+                                                      5,
+                                                    )}
+                                                  </span>
+                                                  <span>
+                                                    {schedule.end_time.slice(
+                                                      0,
+                                                      5,
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              </div>
                                             </div>
                                           );
                                         })}
                                       </div>
                                     ) : (
-                                      /* Nút Quick Add qua Security Modal */
+                                      /* Nút Quick Add */
                                       <button
                                         type="button"
-                                        onClick={() => triggerSecureAction(() => handleQuickAdd(day.value, time.start, time.end))}
+                                        onClick={() =>
+                                          triggerSecureAction(() =>
+                                            handleQuickAdd(
+                                              day.value,
+                                              time.start,
+                                              time.end,
+                                            ),
+                                          )
+                                        }
                                         className="group-btn flex h-full w-full items-center justify-center rounded md:rounded-lg border border-dashed border-transparent bg-transparent opacity-0 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:opacity-100"
                                       >
-                                        <span className="flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">
-                                          {isUnlocked ? <span className="text-[12px] md:text-base">+</span> : (
-                                            <svg className="h-3 w-3 md:h-3.5 md:w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        <span className="flex h-4 w-4 md:h-6 md:w-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">
+                                          {isUnlocked ? (
+                                            <span className="text-[10px] md:text-base">
+                                              +
+                                            </span>
+                                          ) : (
+                                            <svg
+                                              className="h-2.5 w-2.5 md:h-3.5 md:w-3.5"
+                                              fill="none"
+                                              viewBox="0 0 24 24"
+                                              stroke="currentColor"
+                                            >
+                                              <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={3}
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                              />
                                             </svg>
                                           )}
                                         </span>
@@ -568,103 +785,6 @@ export default function Timetable() {
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && !error && schedules.length === 0 && (
-          <div className="mt-5 rounded-xl border border-dashed border-slate-200 p-8 text-center bg-white">
-            <p className="text-base font-bold text-slate-800">No schedules found</p>
-            <p className="mt-1 text-sm text-slate-500">
-              Hover over any empty cell and click "+" to add a schedule.
-            </p>
-          </div>
-        )}
-
-        {/* 🛡️ PIN Modal Overlay */}
-        {showPinModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-sm rounded-[2rem] bg-white p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-              
-              <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600 mb-5">
-                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">Restricted Access</h3>
-                <p className="mt-2 text-sm font-medium text-slate-500">
-                  Wanna change schedule? <br /> pls send me a message.
-                </p>
-              </div>
-
-              {/* Pin Indicator Dots */}
-              <div className="mt-8 flex justify-center gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-3.5 w-3.5 rounded-full transition-all duration-200 ${
-                      i < pin.length ? "bg-slate-800 scale-110" : "bg-slate-200"
-                    } ${pinError ? "bg-red-500 animate-pulse" : ""}`}
-                  />
-                ))}
-              </div>
-
-              {/* Numpad */}
-              <div className="mt-10 grid grid-cols-3 gap-y-6 gap-x-4 px-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => handlePinInput(num.toString())}
-                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-2xl font-semibold text-slate-900 transition hover:bg-slate-200 active:scale-90"
-                  >
-                    {num}
-                  </button>
-                ))}
-                
-                {/* Clear Button */}
-                <button
-                  onClick={() => { setPin(""); setPinError(false); }}
-                  className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-sm font-bold text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 active:scale-90"
-                >
-                  CLEAR
-                </button>
-                
-                <button
-                  onClick={() => handlePinInput("0")}
-                  className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-2xl font-semibold text-slate-900 transition hover:bg-slate-200 active:scale-90"
-                >
-                  0
-                </button>
-                
-                {/* Delete Button */}
-                <button
-                  onClick={() => {
-                    setPin((prev) => prev.slice(0, -1));
-                    setPinError(false);
-                  }}
-                  className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 active:scale-90"
-                >
-                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Cancel Button */}
-              <div className="mt-8 flex justify-center">
-                <button
-                  onClick={() => {
-                    setShowPinModal(false);
-                    setPin("");
-                    setPinError(false);
-                  }}
-                  className="rounded-full px-6 py-2 text-sm font-bold text-slate-500 transition hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
               </div>
             </div>
           </div>
