@@ -2,85 +2,48 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
-// 🎨 Bảng phối màu Pastel đồng bộ từ StudentCard
+// 🎨 Bảng màu tinh giản: Giữ lại màu đặc trưng nhưng làm dịu đi (Soft UI)
 const STUDENT_THEMES = [
   {
-    decoBg: "bg-blue-50/80",
-    decoBgAlt: "bg-blue-100/40",
-    avatarRing: "ring-blue-100/50",
+    decoBg: "bg-blue-50/50",
     badgeBg: "bg-blue-50",
     badgeText: "text-blue-600",
-    badgeRing: "ring-blue-500/10",
-    hoverBorder: "hover:border-blue-300",
-    hoverShadow: "hover:shadow-blue-100/50",
-    arrowHoverBg: "group-hover:bg-blue-600",
+    iconBg: "bg-blue-50 text-blue-600",
+    hoverBorder: "hover:border-blue-200 hover:ring-4 hover:ring-blue-50/50",
+    featuredBg: "bg-slate-900 text-white shadow-lg", // Thẻ nổi bật dùng nền Dark chuyên nghiệp
+    featuredIconBg: "bg-white/10 text-white",
     footerHover: "group-hover:text-blue-600",
-    iconText: "text-blue-600",
   },
   {
-    decoBg: "bg-emerald-50/80",
-    decoBgAlt: "bg-emerald-100/40",
-    avatarRing: "ring-emerald-100/50",
+    decoBg: "bg-emerald-50/50",
     badgeBg: "bg-emerald-50",
     badgeText: "text-emerald-600",
-    badgeRing: "ring-emerald-500/10",
-    hoverBorder: "hover:border-emerald-300",
-    hoverShadow: "hover:shadow-emerald-100/50",
-    arrowHoverBg: "group-hover:bg-emerald-600",
+    iconBg: "bg-emerald-50 text-emerald-600",
+    hoverBorder:
+      "hover:border-emerald-200 hover:ring-4 hover:ring-emerald-50/50",
+    featuredBg: "bg-slate-900 text-white shadow-lg",
+    featuredIconBg: "bg-white/10 text-white",
     footerHover: "group-hover:text-emerald-600",
-    iconText: "text-emerald-600",
   },
   {
-    decoBg: "bg-purple-50/80",
-    decoBgAlt: "bg-purple-100/40",
-    avatarRing: "ring-purple-100/50",
+    decoBg: "bg-purple-50/50",
     badgeBg: "bg-purple-50",
     badgeText: "text-purple-600",
-    badgeRing: "ring-purple-500/10",
-    hoverBorder: "hover:border-purple-300",
-    hoverShadow: "hover:shadow-purple-100/50",
-    arrowHoverBg: "group-hover:bg-purple-600",
+    iconBg: "bg-purple-50 text-purple-600",
+    hoverBorder: "hover:border-purple-200 hover:ring-4 hover:ring-purple-50/50",
+    featuredBg: "bg-slate-900 text-white shadow-lg",
+    featuredIconBg: "bg-white/10 text-white",
     footerHover: "group-hover:text-purple-600",
-    iconText: "text-purple-600",
   },
   {
-    decoBg: "bg-amber-50/80",
-    decoBgAlt: "bg-amber-100/40",
-    avatarRing: "ring-amber-100/50",
+    decoBg: "bg-amber-50/50",
     badgeBg: "bg-amber-50",
     badgeText: "text-amber-600",
-    badgeRing: "ring-amber-500/10",
-    hoverBorder: "hover:border-amber-300",
-    hoverShadow: "hover:shadow-amber-100/50",
-    arrowHoverBg: "group-hover:bg-amber-500",
+    iconBg: "bg-amber-50 text-amber-600",
+    hoverBorder: "hover:border-amber-200 hover:ring-4 hover:ring-amber-50/50",
+    featuredBg: "bg-slate-900 text-white shadow-lg",
+    featuredIconBg: "bg-white/10 text-white",
     footerHover: "group-hover:text-amber-600",
-    iconText: "text-amber-600",
-  },
-  {
-    decoBg: "bg-rose-50/80",
-    decoBgAlt: "bg-rose-100/40",
-    avatarRing: "ring-rose-100/50",
-    badgeBg: "bg-rose-50",
-    badgeText: "text-rose-600",
-    badgeRing: "ring-rose-500/10",
-    hoverBorder: "hover:border-rose-300",
-    hoverShadow: "hover:shadow-rose-100/50",
-    arrowHoverBg: "group-hover:bg-rose-600",
-    footerHover: "group-hover:text-rose-600",
-    iconText: "text-rose-600",
-  },
-  {
-    decoBg: "bg-cyan-50/80",
-    decoBgAlt: "bg-cyan-100/40",
-    avatarRing: "ring-cyan-100/50",
-    badgeBg: "bg-cyan-50",
-    badgeText: "text-cyan-600",
-    badgeRing: "ring-cyan-500/10",
-    hoverBorder: "hover:border-cyan-300",
-    hoverShadow: "hover:shadow-cyan-100/50",
-    arrowHoverBg: "group-hover:bg-cyan-600",
-    footerHover: "group-hover:text-cyan-600",
-    iconText: "text-cyan-600",
   },
 ];
 
@@ -102,10 +65,72 @@ interface Student {
 }
 
 interface StudentPageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }
+
+// BỘ SVG ICONS CHUYÊN NGHIỆP THAY THẾ EMOJI
+const Icons = {
+  grades: (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+      />
+    </svg>
+  ),
+  assignments: (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    </svg>
+  ),
+  resources: (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+      />
+    </svg>
+  ),
+  progress: (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+  ),
+};
 
 export default async function StudentDashboard({ params }: StudentPageProps) {
   const { id } = await params;
@@ -116,26 +141,23 @@ export default async function StudentDashboard({ params }: StudentPageProps) {
     .eq("id", id)
     .single();
 
-  if (error || !student) {
-    notFound();
-  }
+  if (error || !student) notFound();
 
   const typedStudent = student as Student;
-  // Lấy màu chủ đạo của học sinh để truyền vào toàn bộ dashboard
   const theme = getStudentTheme(typedStudent.id);
 
   return (
-    <main className="min-h-screen bg-slate-50 antialiased">
-      {/* Header */}
+    <main className="min-h-screen bg-slate-50 antialiased font-sans">
+      {/* Header Tối giản */}
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 md:py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div>
             <Link
               href="/"
-              className={`inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition-colors ${theme.footerHover}`}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
             >
               <svg
-                className="h-3.5 w-3.5"
+                className="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -143,21 +165,18 @@ export default async function StudentDashboard({ params }: StudentPageProps) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              <span>Back to Directory</span>
+              Back to Directory
             </Link>
-
-            <h1 className="mt-1 text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+            <h1 className="mt-1.5 text-xl font-bold tracking-tight text-slate-900">
               Student Portal
             </h1>
           </div>
-
-          {/* Avatar nhỏ góc phải trên Laptop (ẩn trên mobile) */}
           <div
-            className={`hidden sm:flex h-10 w-10 items-center justify-center rounded-xl font-bold ${theme.badgeBg} ${theme.badgeText}`}
+            className={`hidden sm:flex h-10 w-10 items-center justify-center rounded-full font-bold ${theme.badgeBg} ${theme.badgeText}`}
           >
             {typedStudent.name.charAt(0)}
           </div>
@@ -165,46 +184,37 @@ export default async function StudentDashboard({ params }: StudentPageProps) {
       </header>
 
       {/* Main Content */}
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:py-10">
-        {/* Welcome / Profile Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-white p-5 sm:p-8 shadow-sm ring-1 ring-slate-200">
-          {/* Background decoration */}
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12">
+        {/* Profile Header chuyên nghiệp */}
+        <div className="relative overflow-hidden rounded-3xl bg-white p-6 sm:p-10 shadow-sm border border-slate-200">
           <div
             className={`absolute -right-20 -top-20 h-64 w-64 rounded-full ${theme.decoBg}`}
           />
-          <div
-            className={`absolute -bottom-24 right-20 sm:right-40 h-40 w-40 rounded-full ${theme.decoBgAlt}`}
-          />
 
-          <div className="relative flex flex-col items-center text-center sm:flex-row sm:text-left gap-5 sm:gap-6">
-            {/* Avatar Responsive */}
-            <div className="relative shrink-0">
+          <div className="relative flex flex-col items-center text-center sm:flex-row sm:text-left gap-6 sm:gap-8">
+            <div className="shrink-0">
               <img
                 src={typedStudent.avatar}
                 alt={`${typedStudent.name}'s avatar`}
-                className={`h-20 w-20 sm:h-24 sm:w-24 rounded-3xl object-cover ring-4 ring-white shadow-sm ${theme.avatarRing}`}
+                className="h-24 w-24 rounded-full object-cover ring-1 ring-slate-200 shadow-sm"
               />
-              <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-4 border-white bg-emerald-400 shadow-sm" />
             </div>
 
-            {/* Student info */}
             <div className="flex-1">
-              <p className={`text-xs sm:text-sm font-bold ${theme.badgeText}`}>
-                Welcome back 👋
+              <p className="text-sm font-semibold text-slate-500">
+                Welcome back,
               </p>
-
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">
                 {typedStudent.name}
               </h2>
 
-              <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
+              <div className="mt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
                 <span
-                  className={`rounded-full px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider ring-1 ${theme.badgeBg} ${theme.badgeText} ${theme.badgeRing}`}
+                  className={`rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${theme.badgeBg} ${theme.badgeText}`}
                 >
                   {typedStudent.grade}
                 </span>
-
-                <span className="text-xs sm:text-sm font-medium text-slate-500">
+                <span className="text-sm font-medium text-slate-500">
                   {typedStudent.email}
                 </span>
               </div>
@@ -213,117 +223,85 @@ export default async function StudentDashboard({ params }: StudentPageProps) {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">
           <DashboardStat
             title="Grades"
             value="—"
-            description="No grades yet"
-            icon="📊"
+            desc="No grades yet"
             theme={theme}
           />
           <DashboardStat
             title="Assignments"
             value="—"
-            description="No assignments yet"
-            icon="📝"
+            desc="No assignments yet"
             theme={theme}
           />
-          {/* Card thứ 3 trên Mobile sẽ chiếm trọn 2 cột để không bị lép */}
           <div className="col-span-2 md:col-span-1">
             <DashboardStat
               title="Progress"
               value="—"
-              description="Coming soon"
-              icon="🚀"
+              desc="Coming soon"
               theme={theme}
             />
           </div>
         </div>
 
-        {/* Dashboard Cards Sections */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
-          <DashboardCard
-            href={`/students/${typedStudent.id}/grades`}
-            icon="📊"
-            title="Grades"
-            description="View your grades, test results, and academic performance."
-            action="View grades"
-            theme={theme}
-          />
-          <DashboardCard
-            href={`/students/${typedStudent.id}/assignments`}
-            icon="📝"
-            title="Assignments"
-            description="Check your upcoming assignments and completed work."
-            action="View assignments"
-            theme={theme}
-          />
-          <DashboardCard
-            href={`/students/${typedStudent.id}/resources`}
-            icon="📚"
-            title="Learning Resources"
-            description="Access notes, documents, exercises, and study materials."
-            action="Open resources"
-            theme={theme}
-          />
-          <DashboardCard
-            href={`/students/${typedStudent.id}/progress`}
-            icon="🎯"
-            title="My Progress"
-            description="Track your learning progress and see what to focus on next."
-            action="View progress"
-            theme={theme}
-          />
+        {/* Cards Section */}
+        <div className="mt-12">
+          <h3 className="mb-5 text-sm font-bold uppercase tracking-widest text-slate-500">
+            Workspace
+          </h3>
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <DashboardCard
+              href={`/students/${typedStudent.id}/assignments`}
+              icon={Icons.assignments}
+              title="Assignments"
+              description="Manage your upcoming deadlines and submit your coursework."
+              action="View Assignments"
+              theme={theme}
+              isFeatured={true}
+            />
+            <DashboardCard
+              href={`/students/${typedStudent.id}/resources`}
+              icon={Icons.resources}
+              title="Learning Resources"
+              description="Access syllabus, documents, and reference materials."
+              action="Open Resources"
+              theme={theme}
+              isFeatured={true}
+            />
+            <DashboardCard
+              href={`/students/${typedStudent.id}/grades`}
+              icon={Icons.grades}
+              title="Grades & Scores"
+              description="Review your academic performance and recent test results."
+              action="Check Grades"
+              theme={theme}
+            />
+            <DashboardCard
+              href={`/students/${typedStudent.id}/progress`}
+              icon={Icons.progress}
+              title="Progress Tracker"
+              description="Monitor your overall learning journey and milestones."
+              action="View Progress"
+              theme={theme}
+            />
+          </div>
         </div>
       </section>
     </main>
   );
 }
 
-/* ----------------------------- */
-/* Dashboard Stat Component      */
-/* ----------------------------- */
-
-function DashboardStat({
-  title,
-  value,
-  description,
-  icon,
-  theme,
-}: {
-  title: string;
-  value: string;
-  description: string;
-  icon: string;
-  theme: any;
-}) {
+function DashboardStat({ title, value, desc, theme }: any) {
   return (
-    <div className="rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs sm:text-sm font-semibold text-slate-500">
-            {title}
-          </p>
-          <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-extrabold text-slate-900">
-            {value}
-          </p>
-          <p className="mt-1 text-[10px] sm:text-xs font-medium text-slate-400">
-            {description}
-          </p>
-        </div>
-        <div
-          className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl text-base sm:text-lg ${theme.badgeBg} ${theme.iconText}`}
-        >
-          {icon}
-        </div>
-      </div>
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <p className="text-sm font-semibold text-slate-500">{title}</p>
+      <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
+      <p className="mt-1 text-xs font-medium text-slate-400">{desc}</p>
     </div>
   );
 }
-
-/* ----------------------------- */
-/* Dashboard Card Component      */
-/* ----------------------------- */
 
 function DashboardCard({
   href,
@@ -332,59 +310,54 @@ function DashboardCard({
   description,
   action,
   theme,
-}: {
-  href: string;
-  icon: string;
-  title: string;
-  description: string;
-  action: string;
-  theme: any;
-}) {
+  isFeatured,
+}: any) {
   return (
     <Link
       href={href}
-      className={`group block rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${theme.hoverBorder} ${theme.hoverShadow}`}
+      className={`group flex flex-col justify-between rounded-3xl border p-6 transition-all duration-300 ${
+        isFeatured
+          ? `${theme.featuredBg} hover:-translate-y-1`
+          : `border-slate-200 bg-white ${theme.hoverBorder}`
+      }`}
     >
-      <div className="flex items-start justify-between">
+      <div>
         <div
-          className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl text-lg sm:text-xl transition-transform duration-300 group-hover:scale-110 ${theme.badgeBg}`}
+          className={`flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105 ${isFeatured ? theme.featuredIconBg : theme.iconBg}`}
         >
           {icon}
         </div>
-
-        <div
-          className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all duration-300 group-hover:text-white ${theme.arrowHoverBg}`}
+        <h3
+          className={`mt-6 text-xl font-bold ${isFeatured ? "text-white" : "text-slate-900"}`}
         >
-          <svg
-            className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
+          {title}
+        </h3>
+        <p
+          className={`mt-2 text-sm leading-relaxed ${isFeatured ? "text-slate-300" : "text-slate-500"}`}
+        >
+          {description}
+        </p>
       </div>
 
-      <h3 className="mt-5 sm:mt-6 text-lg sm:text-xl font-bold text-slate-900">
-        {title}
-      </h3>
-
-      <p className="mt-1 sm:mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-slate-500">
-        {description}
-      </p>
-
-      <div className="mt-5 sm:mt-6 border-t border-slate-100 pt-3 sm:pt-4">
+      <div className="mt-8 flex items-center justify-between">
         <span
-          className={`text-xs sm:text-sm font-bold text-slate-500 transition-colors ${theme.footerHover}`}
+          className={`text-sm font-bold transition-colors ${isFeatured ? "text-white group-hover:text-slate-300" : `text-slate-500 ${theme.footerHover}`}`}
         >
-          {action} →
+          {action}
         </span>
+        <svg
+          className={`h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 ${isFeatured ? "text-white" : "text-slate-400 group-hover:text-slate-900"}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M14 5l7 7m0 0l-7 7m7-7H3"
+          />
+        </svg>
       </div>
     </Link>
   );
