@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   description: "Learning hub for schedules, students, and assignments.", // Mô tả web (dùng cho SEO)
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
