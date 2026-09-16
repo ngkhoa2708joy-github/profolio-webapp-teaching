@@ -12,8 +12,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import type { Metadata } from "next";
-
 export const metadata: Metadata = {
   title: "Profolio Workspace", // Tên hiển thị trên Tab Google
   description: "Learning hub for schedules, students, and assignments.", // Mô tả web (dùng cho SEO)
